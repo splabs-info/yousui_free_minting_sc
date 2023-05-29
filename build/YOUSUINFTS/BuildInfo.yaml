@@ -1,0 +1,23 @@
+---
+compiled_package_info:
+  package_name: YOUSUINFTS
+  address_alias_instantiation:
+    std: "0000000000000000000000000000000000000000000000000000000000000001"
+    sui: "0000000000000000000000000000000000000000000000000000000000000002"
+    yousuinfts: "0000000000000000000000000000000000000000000000000000000000000000"
+  source_digest: CE4A10FE41E2B9CAE8B5B96FDA35D382767761BE23D14EF0B05F496742E3CDFF
+  build_flags:
+    dev_mode: false
+    test_mode: false
+    generate_docs: false
+    generate_abis: false
+    install_dir: ~
+    force_recompilation: false
+    lock_file: "./Move.lock"
+    additional_named_addresses: {}
+    architecture: ~
+    fetch_deps_only: false
+    skip_fetch_latest_git_deps: false
+dependencies:
+  - MoveStdlib
+  - Sui
