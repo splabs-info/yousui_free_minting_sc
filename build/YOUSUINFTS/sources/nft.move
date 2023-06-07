@@ -8,7 +8,11 @@ module yousuinfts::nft {
     use sui::package;
     use sui::display;
 
-    const ENOT_AUTHORIZED: u64 = 1; 
+    friend yousuinfts::freemint; 
+
+    
+
+    const ENotAuthorized: u64 = 1; 
 
     struct YOUSUINFT has key, store {
         id: UID,
@@ -103,12 +107,11 @@ module yousuinfts::nft {
         &nft.image_url
     }
 
-     public fun project_url(nft: &YOUSUINFT): &Url {
+    public fun project_url(nft: &YOUSUINFT): &Url {
         &nft.project_url
     }
-
   
-    public  fun mint( type: vector<u8>, info: &mut Infomation,
+    public(friend) fun mint( type: vector<u8>, info: &mut Infomation,
         ctx: &mut TxContext
     ) {
         let sender = tx_context::sender(ctx);
@@ -117,52 +120,52 @@ module yousuinfts::nft {
         let description: String;
 
         url_image = b"";
-        description = utf8(b"Description here");
+        description = utf8(b"");
 
         if(type == b"og"){
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_OGROLE.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_OGROLE.png";
             description = info.description_og;
         };
 
         if(type == b"pfp"){
             description = info.description_pfp;
             if(info.mint_index %4 == 0)
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_PFP4.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_PFP4.png";
             if(info.mint_index %4 == 1)
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_PFP1.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_PFP1.png";
             if(info.mint_index %4 == 2)
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_PFP2.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_PFP2.png";
             if(info.mint_index %4 == 3)
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_PFP3.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_PFP3.png";
 
         };
         if(type == b"1") {
-            description = info.description_tier2;
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_TIER2.png";
+            description = info.description_tier1;
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_TIER1.png";
         };
         if(type == b"2") {
             description = info.description_tier2;
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_TIER2.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_TIER2.png";
         };
 
         if(type == b"3") {
             description = info.description_tier3;
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_TIER3.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_TIER3.png";
         };
 
         if(type == b"4") {
             description = info.description_tier4;
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_TIER4.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_TIER4.png";
         };
 
         if(type == b"5") {
             description = info.description_tier5;
-            url_image = b"https://files.yousui.io/mint-beta/YouSUI_NFT_TIER5.png";
+            url_image = b"https://files.yousui.io/mint/YouSUI_NFT_TIER5.png";
         };
         
         let nft = YOUSUINFT {
             id: object::new(ctx),
-            name: utf8(b"YOUSUI-NFT"),
+            name: utf8(b"YOUSUI"),
             description: description,
             type: type,
             project_url: info.project_url,
@@ -192,7 +195,7 @@ module yousuinfts::nft {
         new_description: String,
         ctx: &mut TxContext
     ) {
-        assert!(info.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(info.creator == tx_context::sender(ctx), ENotAuthorized);
         info.description_og = new_description
     }
 
@@ -201,7 +204,7 @@ module yousuinfts::nft {
         new_description: String,
         ctx: &mut TxContext
     ) {
-        assert!(info.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(info.creator == tx_context::sender(ctx), ENotAuthorized);
         info.description_pfp = new_description
     }
 
@@ -211,7 +214,7 @@ module yousuinfts::nft {
         new_description: String,
         ctx: &mut TxContext
     ) {
-        assert!(info.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(info.creator == tx_context::sender(ctx), ENotAuthorized);
         info.description_tier1 = new_description
     }
 
@@ -220,7 +223,7 @@ module yousuinfts::nft {
         new_description: String,
         ctx: &mut TxContext
     ) {
-        assert!(info.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(info.creator == tx_context::sender(ctx), ENotAuthorized);
         info.description_tier2 = new_description
     }
 
@@ -229,7 +232,7 @@ module yousuinfts::nft {
         new_description: String,
         ctx: &mut TxContext
     ) {
-        assert!(info.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(info.creator == tx_context::sender(ctx), ENotAuthorized);
         info.description_tier3 = new_description
     }
 
@@ -238,7 +241,7 @@ module yousuinfts::nft {
         new_description: String,
         ctx: &mut TxContext
     ) {
-        assert!(info.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(info.creator == tx_context::sender(ctx), ENotAuthorized);
         info.description_tier4 = new_description
     }
 
@@ -247,7 +250,7 @@ module yousuinfts::nft {
         new_description: String,
         ctx: &mut TxContext
     ) {
-        assert!(info.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(info.creator == tx_context::sender(ctx), ENotAuthorized);
         info.description_tier5 = new_description
     }
 
@@ -273,12 +276,12 @@ module yousuinfts::freemint {
 
     // errors
    
-    const ENOT_AUTHORIZED: u64 = 1; 
-    const ENOT_WHITELIST: u64 = 2;
-    const EWHITELIST_EXIST: u64 = 3;
-    const EWHITELIST_NOTEXIST: u64 = 4;
-    const EMAX_MINT_PER_ADDRESS: u64 = 5;
-    const EMAX_MINT: u64 = 6;
+    const ENotAuthorized: u64 = 1; 
+    const ENotWhitelist: u64 = 2;
+    const EWhitelistExist: u64 = 3;
+    const EWhitelistNotExist: u64 = 4;
+    const EMaxMintPerAddress: u64 = 5;
+    const EMaxMint: u64 = 6;
 
 
     
@@ -299,7 +302,7 @@ module yousuinfts::freemint {
 
     fun init(ctx: &mut TxContext) {
 
-        let randomlist: vector<u8> = b"10111111111111151011110111011111011501101111110111511110111511111015111110111151111151111511115110101510511111111110111111111111110510101151511511115111101111111015111005111151110115115101111101151111051011115111115110115101511111110151111100111111101510155111151110115501115111001111511111111551150151111111111115115011110011110101111111111101151511115155115111110101111111101110111111111511111111111111111111501111511111111110111101111100511111011115111111151511111011101111101115111111111111111111110115110111111100111551105011111111111511111111111111110111051111111111111111055111115111111111511150115111151111111111511111111151011510011111511051511501551111151111151110511111010111115511111111111111111551111111111011115110115011011111111551011111501111111111111111111111111151510051111515511101511111510111111011115110511111111111111115011111111151151151511001011015011105155110111111111111115111155110101111501511110511111115101111111511151111110111111110505051011115501111101110111111111011011101511151110111011111111111111111011111110111551111115101110111111111111111111151111100511111051111111511011101111511111110015115111151111111111011111011111011101111511155011511111011150101111111111510111111111105155111151111111110101050111111111111111111511151501010011110111011101150100511115501111111111111111111011111111111111511110551111111111111511051151111515101101150511110111111111011111111111111111155111111111510111111111111111111111111111111101115101115111100111111111115115111151110110111551111001111110111111115015111111111151111151110155111151155151111111115110115111111011100110111011101115511111100111011151115111110111110110511111111015111111111111115511101515011101111110001110011011110110111111111011111115501110155011111110110111110111111010111111151115011551111551511115510115101011511111111115111110111101151111111105551111111111150111111111151511151111111111511011111511515111111110101151111111115111115111111100101010105101001111011100011111111111111011111111111551511111151";
+        let randomlist: vector<u8> = b"11111111111111111111111111111111111111111111111111111111111111111111111111111101111111111111110111111111101111111111111111151115111111111111111111111111111101111111111111111111111111111111111511111111511111111511111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110111111111511111111111111111111111111111511111111111111111111111111111111111111111111111115110111111111111111111111111111111111111111111111101111111111111111111011111111111111511111111111111111111111111111111111151111111111111151111111111111111111111111111111111111511111111111111111111111111111111111111111111111011115111111111111111111111111111151111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110111151111111111111111111111111111111511111151111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111151111111111111111111111111111111111111111111111111111111111151111111111111115111110111111111111111111111111511111111111111511111111111111111111111111511111111111111111111111111111111111111111115110111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111101111011111111111111511111151111111111111111111111111111111111111111111115111111111111111111111111111111111111111511111111111101111111111111111111111111111111111111111111111111111111111111111111111111111111111115111151111111111111111110111115111111111115111111111111111111511111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111151111111111111111111111111511111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111151111111111111111111111111115111111111111111111111111111111101111111111111111111111111111111111111111111111111111111111111111111110111111111111111111111111111111111111111111011111111511111111111115111111111111111111151111111111111111111111111111111111111";
 
         let freemint = FreeMint {
             id: object::new(ctx),
@@ -322,7 +325,7 @@ module yousuinfts::freemint {
      whitelist: vector<address>,
      ctx: &mut TxContext,
     ) {
-        assert!(freemint.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
         let len = vector::length(&whitelist);
         let i = 0;
         while (i < len) {
@@ -338,8 +341,8 @@ module yousuinfts::freemint {
      addr_whitelist: address,
      ctx: &mut TxContext,
     ) {
-        assert!(freemint.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
-        assert!(!vector::contains(&freemint.whitelist, &addr_whitelist), EWHITELIST_EXIST);
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
+        assert!(!vector::contains(&freemint.whitelist, &addr_whitelist), EWhitelistExist);
         vector::push_back(&mut freemint.whitelist,addr_whitelist);      
     }
 
@@ -347,17 +350,17 @@ module yousuinfts::freemint {
      addr_whitelist: address,
      ctx: &mut TxContext,
     ) {
-        assert!(freemint.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
        // assert!(vector::contains(&mint.whitelist, &addr_whitelist), EWHITELIST_EXIST);
         let (check,i) = vector::index_of(&freemint.whitelist,&addr_whitelist);
-        assert!(check, EWHITELIST_NOTEXIST);
+        assert!(check, EWhitelistNotExist);
         vector::remove(&mut freemint.whitelist,i);  
     }
 
      public entry fun reset_whitelist(freemint: &mut FreeMint, 
      ctx: &mut TxContext,
     ) {
-        assert!(freemint.creator == tx_context::sender(ctx), ENOT_AUTHORIZED);
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
         vector::destroy_empty(freemint.whitelist);   
     }
 
@@ -365,9 +368,12 @@ module yousuinfts::freemint {
         let sender = tx_context::sender(ctx);
         assert!(
             vector::contains(&freemint.whitelist, &sender),
-            ENOT_WHITELIST
+            ENotWhitelist
         );
-        assert!(freemint.number < MAX_MINT, EMAX_MINT);
+        let i = 0;
+        while( i < 5 ) {
+        i = i+1;
+        assert!(freemint.number < MAX_MINT, EMaxMint);
         let sender = tx_context::sender(ctx);
         let count: u64 = 0;
         let isadd: bool = true;
@@ -375,7 +381,7 @@ module yousuinfts::freemint {
         let minted_no = table::borrow(&mut freemint.mints, sender);
         isadd  = false;
         count = *minted_no;
-        assert!(count < MAX_MINT_PER_ADDRESS, EMAX_MINT_PER_ADDRESS);
+        assert!(count <= MAX_MINT_PER_ADDRESS, EMaxMintPerAddress);
          };
         let index_type = vector::pop_back(&mut freemint.randoms) - 48;
         let type: vector<u8>;
@@ -390,10 +396,11 @@ module yousuinfts::freemint {
         nft::mint(type,nftinfo,ctx);
         freemint.number = freemint.number+1;
         if(isadd) {
-                table::add(&mut freemint.mints, sender, count+1);
+            table::add(&mut freemint.mints, sender, count+1);
         } else {
             table::remove(&mut freemint.mints, sender);
             table::add(&mut freemint.mints, sender, count+1);
         }  
+        }
     }
 }
