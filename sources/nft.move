@@ -110,8 +110,8 @@ module yousuinfts::nft {
         &nft.project_url
     }
 
-    public fun get_type(nft: &YOUSUINFT):&vector<u8>{
-        &nft.type
+    public fun type(nft: &YOUSUINFT): vector<u8>{
+        nft.type
     }
   
     public(friend) fun mint( type: vector<u8>, info: &mut Infomation,

@@ -1,6 +1,7 @@
 [package]
 name = "YOUSUINFTS"
 version = "0.0.1"
+published-at = "0x36452bd1553717ab5b77a42c92e792a8cdd2844d8f98fc45f6c62cf84963b03f"
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "testnet" }
