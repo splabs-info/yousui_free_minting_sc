@@ -94,7 +94,6 @@ module yousuinfts::nft {
     }
 
     
-
     public fun name(nft: &YOUSUINFT): &String {
         &nft.name
     }
@@ -109,6 +108,10 @@ module yousuinfts::nft {
 
     public fun project_url(nft: &YOUSUINFT): &Url {
         &nft.project_url
+    }
+
+    public fun get_type(nft: &YOUSUINFT):&vector<u8>{
+        &nft.type
     }
   
     public(friend) fun mint( type: vector<u8>, info: &mut Infomation,
@@ -266,13 +269,12 @@ module yousuinfts::freemint {
 
     use yousuinfts::nft::{Self};
     use sui::tx_context::{Self, TxContext};
+    use std::string::{utf8, String};
     use sui::object::{Self, UID};
     use std::vector;
     use sui::transfer;
     use sui::table::{Self, Table};
 
-    const MAX_MINT_PER_ADDRESS: u64 = 5;
-    const MAX_MINT: u64 = 2000;
 
     // errors
    
@@ -293,10 +295,13 @@ module yousuinfts::freemint {
     struct FreeMint has key {
         id: UID,
         number: u64,
-        max_number: u64,
+        max_mint: u64,
+        mint_per_address: u64,
+        is_whitelist: bool,
         whitelist: vector<address>,
         mints: Table<address, u64>,
         randoms: vector<u8>,
+        name: String,
         creator: address,
     }
 
@@ -307,17 +312,52 @@ module yousuinfts::freemint {
         let freemint = FreeMint {
             id: object::new(ctx),
             number: 0,
-            max_number: MAX_MINT,
+            is_whitelist: false,
+            mint_per_address: 5,
+            max_mint: 2000,
             whitelist: vector::empty<address>(),
             mints: table::new(ctx),
             randoms:randomlist,
+            name: utf8(b"Free Mint"),
             creator: tx_context::sender(ctx),
         };
 
-        vector::push_back(&mut freemint.whitelist,@0xbb47b7e40f8e1f7f4cd6f15bdeceaccb2afcc103396fc70456dbc2b63f647679);
-        vector::push_back(&mut freemint.whitelist,@0x0ad2f84b705b26479f0a0a20d142db298308b39117bc7b0cbf44aeae6312ed5f);
+       // vector::push_back(&mut freemint.whitelist,@0xbb47b7e40f8e1f7f4cd6f15bdeceaccb2afcc103396fc70456dbc2b63f647679);
+        transfer::share_object(freemint)
+    }
 
-       transfer::share_object(freemint)
+    public entry fun create_freemint(freemint: &mut FreeMint, name: String, mint_per_address: u64, max_mint: u64, is_whitelist: bool, ctx: &mut TxContext) {
+        
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
+        let newfreemint = FreeMint {
+            id: object::new(ctx),
+            number: 0,
+            is_whitelist: is_whitelist,
+            mint_per_address: mint_per_address,
+            max_mint: max_mint,
+            whitelist: vector::empty<address>(),
+            mints: table::new(ctx),
+            randoms:vector::empty<u8>(),
+            name: name,
+            creator: tx_context::sender(ctx),
+        };
+        transfer::share_object(newfreemint);
+    }
+
+
+    public entry fun update_maxmint(new: u64, freemint: &mut FreeMint, ctx: &mut TxContext){ 
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
+        freemint.max_mint = new;
+    }
+
+    public entry fun update_maxmintperaddress(new: u64, freemint: &mut FreeMint, ctx: &mut TxContext){ 
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
+        freemint.mint_per_address = new;
+    }
+
+    public entry fun updaterandomlist(list: vector<u8>, freemint: &mut FreeMint, ctx: &mut TxContext){
+        assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
+        freemint.randoms = list;
     }
 
 
@@ -361,46 +401,73 @@ module yousuinfts::freemint {
      ctx: &mut TxContext,
     ) {
         assert!(freemint.creator == tx_context::sender(ctx), ENotAuthorized);
-        vector::destroy_empty(freemint.whitelist);   
+        freemint.whitelist = vector::empty();
+    }
+
+    fun get_type(number: u8): vector<u8>{
+
+        let type: vector<u8>;
+        type = b"pfp";
+        if(number == 0) {
+            type = b"og";
+        };
+        if(number == 5) {
+            type = b"5";
+        };
+        type
+
     }
 
     public entry fun freemint(freemint: &mut FreeMint, nftinfo: &mut nft::Infomation  ,ctx: &mut TxContext) {
         let sender = tx_context::sender(ctx);
-        assert!(
-            vector::contains(&freemint.whitelist, &sender),
-            ENotWhitelist
-        );
-        let i = 0;
-        while( i < 5 ) {
-        i = i+1;
-        assert!(freemint.number < MAX_MINT, EMaxMint);
+        // check whitelist if is_whitelist
+        if(freemint.is_whitelist == true) {
+            assert!(
+                vector::contains(&freemint.whitelist, &sender),
+                ENotWhitelist
+            );
+        };
+
+        //
         let sender = tx_context::sender(ctx);
         let count: u64 = 0;
         let isadd: bool = true;
+        let i = 0;
         if(table::contains(&freemint.mints, sender)) {
-        let minted_no = table::borrow(&mut freemint.mints, sender);
-        isadd  = false;
-        count = *minted_no;
-        assert!(count <= MAX_MINT_PER_ADDRESS, EMaxMintPerAddress);
+            let minted_no = table::borrow(&mut freemint.mints, sender);
+            isadd  = false;
+            count = *minted_no;
          };
-        let index_type = vector::pop_back(&mut freemint.randoms) - 48;
-        let type: vector<u8>;
-        type = b"pfp";
-        if(index_type == 0) {
-            type = b"og";
-        };
-        if(index_type == 5) {
-            type = b"5";
+
+        if(freemint.mint_per_address >0) {
+            while( i < freemint.mint_per_address ) {
+                i = i+1;
+                assert!(freemint.number < freemint.max_mint, EMaxMint);
+                assert!(count <= freemint.mint_per_address, EMaxMintPerAddress);
+                let index_type = vector::pop_back(&mut freemint.randoms) - 48;
+                let type: vector<u8>;
+                type = get_type(index_type);
+                nft::mint(type,nftinfo,ctx);
+                freemint.number = freemint.number+1;
+                count = count+1;
+            };
+        } else {
+                assert!(freemint.number < freemint.max_mint, EMaxMint);
+                let index_type = vector::pop_back(&mut freemint.randoms) - 48;
+                let type: vector<u8>;
+                type = get_type(index_type);
+                nft::mint(type,nftinfo,ctx);
+                freemint.number = freemint.number+1;
+                count = count+1;
         };
 
-        nft::mint(type,nftinfo,ctx);
-        freemint.number = freemint.number+1;
+
         if(isadd) {
-            table::add(&mut freemint.mints, sender, count+1);
+            table::add(&mut freemint.mints, sender, count);
         } else {
             table::remove(&mut freemint.mints, sender);
-            table::add(&mut freemint.mints, sender, count+1);
-        }  
-        }
+            table::add(&mut freemint.mints, sender, count);
+        } 
+        
     }
 }
