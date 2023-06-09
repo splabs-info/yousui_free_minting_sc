@@ -8,4 +8,4 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 
 [addresses]
 #yousuinfts = "0x0"
-yousuinfts = "0x4a0de1e2b482da120f7d680e68df66fcb587b56cb89ba81b3322ccede49ed523"
+yousuinfts = "0x36452bd1553717ab5b77a42c92e792a8cdd2844d8f98fc45f6c62cf84963b03f"
