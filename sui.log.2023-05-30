@@ -1,4 +1,0 @@
-2023-05-30T06:58:09.723617Z  WARN sui::client_commands: Client/Server api version mismatch, client api version : 0.33.0, server api version : 1.2.0
-2023-05-30T06:58:32.415933Z  WARN sui::client_commands: Client/Server api version mismatch, client api version : 0.33.0, server api version : 1.2.0
-2023-05-30T07:00:57.143029Z  WARN sui::client_commands: Client/Server api version mismatch, client api version : 0.33.0, server api version : 1.2.0
-2023-05-30T07:01:32.772870Z  WARN sui::client_commands: Client/Server api version mismatch, client api version : 0.33.0, server api version : 1.2.0
