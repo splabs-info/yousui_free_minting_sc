@@ -1,29 +1,14 @@
 [package]
 name = "YOUSUINFTS"
 version = "0.0.1"
-#published-at = "0x36452bd1553717ab5b77a42c92e792a8cdd2844d8f98fc45f6c62cf84963b03f"
+
+#testnet
+#published-at = "0x0678c689fad89b7e2bb38d306c4b1f3dc5ff9d7271a5ed42bf05f351dd6a8cb6"
+#mainnet
+published-at = "0x6a29b3b80de2bd69ee94b2a2f11e5bf2e3614d1cc08f1cb16eefa290bc859cb0"
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "mainnet" }
-
-[dependencies.Launchpad]
-git = "https://github.com/Origin-Byte/nft-protocol.git"
-subdir = "contracts/launchpad"
-# mainnet
-rev = "7c8c5d468a18116b682407fbc86756fc121fddb6"
-
-[dependencies.NftProtocol]
-git = "https://github.com/Origin-Byte/nft-protocol.git"
-subdir = "contracts/nft_protocol"
-# mainnet
-rev = "7c8c5d468a18116b682407fbc86756fc121fddb6"
-
-[dependencies.LiquidityLayerV1]
-git = "https://github.com/Origin-Byte/nft-protocol.git"
-subdir = "contracts/liquidity_layer_v1"
-# mainnet
-rev = "7c8c5d468a18116b682407fbc86756fc121fddb6"
-
 
 
 [addresses]
