@@ -10,6 +10,7 @@ module yousuinfts::nft {
 
     friend yousuinfts::freemint; 
     friend yousuinfts::freemintv2; 
+    friend yousuinfts::admmint; 
 
     const ENotAuthorized: u64 = 1; 
 

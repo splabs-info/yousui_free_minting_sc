@@ -3,9 +3,9 @@ name = "YOUSUINFTS"
 version = "0.0.1"
 
 #testnet
-#published-at = "0x0678c689fad89b7e2bb38d306c4b1f3dc5ff9d7271a5ed42bf05f351dd6a8cb6"
+#published-at = "0x1b455acba4691f21afde3608dc3da72a656ef8d3ae9ddd112a6bc0b620697262"
 #mainnet
-published-at = "0x6a29b3b80de2bd69ee94b2a2f11e5bf2e3614d1cc08f1cb16eefa290bc859cb0"
+published-at = "0x3712573f5c150204a861387e8da81b4f25218f9304a2aa3b157389202e040459"
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "mainnet" }
